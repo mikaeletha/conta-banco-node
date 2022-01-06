@@ -27,7 +27,7 @@ function operation() {
         if(action === 'Criar conta') {
             createAccount()
         } else if (action === 'Consultar saldo') {
-
+            getAccountBalance()
         } else if (action === 'Depositar') {
             deposit()
         } else if (action === 'Sacar') {
@@ -70,7 +70,7 @@ function buildAccount() {
 
         fs.writeFileSync(
             `accounts/${accountName}.json`,
-            '{"balnce":0}',
+            '{"balance":0}',
             function (err) { console.log(err)}
         )
 
@@ -143,3 +143,22 @@ function addAmount(accountName,amount) {
     //parte 3
     console.log(chalk.green(`Foi depositado o valor de R$${amount} na sua conta!`))
 }
+function getAccountBalance() {
+    inquirer.prompt([
+        {
+            name:'accountName',
+            message: 'Qual o nome da sua conta?'
+        }
+    ])
+    .then ((answer) => {
+        const accountName = answer['accountName']
+        if(!checkAccount(accountName)) {
+            return getAccountBalance()
+        }
+        const accountData = getAccount(accountName) //pega o json da conta
+        console.log(chalk.bgBlue.black(`Olá, o saldo da conta ${accountName} é de R$${accountData.balance}`))
+        operation()
+    })
+    
+}
+
